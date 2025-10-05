@@ -117,3 +117,16 @@ body {
 
 /* Utilities */
 .text-muted { color: var(--muted); }
+
+/* List header utility */
+.list-header { display: flex; justify-content: space-between; align-items: center; }
+
+/* Modal */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: grid; place-items: center; z-index: 50; }
+.modal { width: 100%; max-width: 560px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.modal-body { padding: 16px 20px; display: grid; gap: 12px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 20px; border-top: 1px solid var(--border); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal select, .modal input, .modal textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); }
+.modal select:focus, .modal input:focus, .modal textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }

@@ -39,7 +39,7 @@ const Login: React.FC = () => {
     <div className="auth-container">
       <div className="auth-card">
   <h2>Welcome back</h2>
-  <p className="auth-subtitle">Sign in to access your portfolio workspace</p>
+  <p className="auth-subtitle">Sign in with your email and password.</p>
         
         {error && <div className="error-message">{error}</div>}
         

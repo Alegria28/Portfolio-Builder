@@ -14,6 +14,17 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<string>('');
+  const [creating, setCreating] = useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState<boolean>(false);
+  const [createForm, setCreateForm] = useState({
+    template: 0,
+    title: 'New Portfolio',
+    hero_title: 'Your Name',
+    hero_subtitle: 'Your Role',
+    about_content: 'Tell your story here...',
+  });
 
   useEffect(() => {
     fetchData();
@@ -40,6 +51,37 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const openCreateModal = async () => {
+    try {
+      setLoadingTemplates(true);
+      const list = await apiService.getTemplates();
+      setTemplates(list);
+      const defaultTpl = list.find((t: any) => !t.is_premium) || list[0];
+      setCreateForm((prev) => ({ ...prev, template: defaultTpl ? defaultTpl.id : 0 }));
+      setShowCreateModal(true);
+    } catch (e) {
+      console.error('Failed to load templates', e);
+      setError('Failed to load templates');
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
+  const submitCreate = async () => {
+    try {
+      setCreating(true);
+      if (!createForm.template) throw new Error('Please choose a template');
+      await apiService.createPortfolio(createForm);
+      setShowCreateModal(false);
+      await fetchData();
+    } catch (err) {
+      console.error('Failed to create portfolio', err);
+      setError('Failed to create project. Are you logged in?');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="dashboard">
@@ -59,7 +101,7 @@ const Dashboard: React.FC = () => {
           <p className="dashboard-subtitle">Manage your portfolio items</p>
         </div>
         
-        <div className="error-message">
+  <div className="error-message">
           <p><strong>⚠️ Connection Error:</strong> {error}</p>
           <p><strong>Quick Fix:</strong></p>
           <ol>
@@ -104,13 +146,22 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <h3>Your Portfolio Projects</h3>
+      <div className="list-header">
+        <h3>Your Portfolio Projects</h3>
+        {portfolioItems.length > 0 && (
+          <button className="cta-button cta-primary" onClick={openCreateModal} disabled={creating}>
+            {creating ? 'Adding…' : 'Add Project'}
+          </button>
+        )}
+      </div>
       
       {portfolioItems.length === 0 ? (
         <div className="empty-state">
           <h4>🎨 No projects yet!</h4>
           <p>Start building your portfolio by adding your first project.</p>
-          <button className="cta-button cta-primary">Add First Project</button>
+          <button className="cta-button cta-primary" onClick={openCreateModal} disabled={creating}>
+            {creating ? 'Adding…' : 'Add First Project'}
+          </button>
         </div>
       ) : (
         <div className="portfolio-items">
@@ -140,6 +191,86 @@ const Dashboard: React.FC = () => {
         </div>
         <p>Your portfolio builder is running perfectly with all components connected!</p>
       </div>
+
+      {showCreateModal && (
+        <div className="modal-backdrop" onClick={() => setShowCreateModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Create New Portfolio</h3>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Template</label>
+                <select
+                  value={createForm.template}
+                  onChange={(e) => setCreateForm({ ...createForm, template: Number(e.target.value) })}
+                  disabled={loadingTemplates}
+                  aria-label="Template"
+                  title="Template"
+                >
+                  {templates.map((t) => (
+                    <option value={t.id} key={t.id}>
+                      {t.name} {t.is_premium ? '(Premium)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Title</label>
+                <input
+                  type="text"
+                  value={createForm.title}
+                  onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
+                  placeholder="New Portfolio"
+                  aria-label="Title"
+                  title="Title"
+                />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Hero Title</label>
+                  <input
+                    type="text"
+                    value={createForm.hero_title}
+                    onChange={(e) => setCreateForm({ ...createForm, hero_title: e.target.value })}
+                    placeholder="Your Name"
+                    aria-label="Hero Title"
+                    title="Hero Title"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Hero Subtitle</label>
+                  <input
+                    type="text"
+                    value={createForm.hero_subtitle}
+                    onChange={(e) => setCreateForm({ ...createForm, hero_subtitle: e.target.value })}
+                    placeholder="Your Role"
+                    aria-label="Hero Subtitle"
+                    title="Hero Subtitle"
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>About</label>
+                <textarea
+                  rows={3}
+                  value={createForm.about_content}
+                  onChange={(e) => setCreateForm({ ...createForm, about_content: e.target.value })}
+                  placeholder="Tell your story here..."
+                  aria-label="About content"
+                  title="About content"
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="cta-button" onClick={() => setShowCreateModal(false)} disabled={creating}>Cancel</button>
+              <button className="cta-button cta-primary" onClick={submitCreate} disabled={creating}>
+                {creating ? 'Creating…' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

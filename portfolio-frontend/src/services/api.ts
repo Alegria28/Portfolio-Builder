@@ -9,7 +9,8 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  // Do not send browser cookies with API calls; use Token auth to avoid CSRF 403s
+  withCredentials: false,
 });
 
 // Add token to requests if available
