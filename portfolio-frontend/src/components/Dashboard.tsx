@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
 
 interface PortfolioItem {
   id: number;
   title: string;
-  description: string;
-  technology: string;
+  template_name: string;
   created_at: string;
+  is_published?: boolean;
 }
 
 const Dashboard: React.FC = () => {
@@ -14,6 +15,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<string>('');
+  const navigate = useNavigate();
   const [creating, setCreating] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [templates, setTemplates] = useState<any[]>([]);
@@ -38,9 +40,9 @@ const Dashboard: React.FC = () => {
       const healthData = await apiService.healthCheck();
       setApiStatus(healthData.message);
       
-      // Fetch portfolio items
-      const items = await apiService.getPortfolioItems();
-      setPortfolioItems(items);
+  // Fetch portfolios (modern API)
+  const items = await apiService.getPortfolios();
+  setPortfolioItems(items);
       
       setError(null);
     } catch (err) {
@@ -79,6 +81,26 @@ const Dashboard: React.FC = () => {
       setError('Failed to create project. Are you logged in?');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleView = (id: number) => {
+    navigate(`/portfolio/${id}`);
+  };
+
+  const handleEdit = (id: number) => {
+    navigate(`/editor/${id}`);
+  };
+
+  const handleDelete = async (id: number) => {
+    const ok = window.confirm('Delete this portfolio? This cannot be undone.');
+    if (!ok) return;
+    try {
+      await apiService.deletePortfolio(id);
+      await fetchData();
+    } catch (e) {
+      console.error('Delete failed', e);
+      setError('Failed to delete portfolio');
     }
   };
 
@@ -137,8 +159,8 @@ const Dashboard: React.FC = () => {
           <p className="stat-number">{portfolioItems.length}</p>
         </div>
         <div className="stat-card">
-          <h3>Technologies</h3>
-          <p className="stat-number">{new Set(portfolioItems.flatMap(item => item.technology.split(', '))).size}</p>
+          <h3>Published</h3>
+          <p className="stat-number">{portfolioItems.filter(i => i.is_published).length}</p>
         </div>
         <div className="stat-card">
           <h3>Database</h3>
@@ -168,13 +190,12 @@ const Dashboard: React.FC = () => {
           {portfolioItems.map((item) => (
             <div key={item.id} className="portfolio-item">
               <h4>📁 {item.title}</h4>
-              <p><strong>Description:</strong> {item.description}</p>
-              <p><strong>Tech Stack:</strong> <span className="tech-tags">{item.technology}</span></p>
+              <p><strong>Template:</strong> {item.template_name || '—'}</p>
               <p><strong>Created:</strong> {new Date(item.created_at).toLocaleDateString()}</p>
               <div className="item-actions">
-                <button className="action-btn edit">✏️ Edit</button>
-                <button className="action-btn view">👁️ View</button>
-                <button className="action-btn delete">🗑️ Delete</button>
+                <button className="action-btn edit" onClick={() => handleEdit(item.id)}>✏️ Edit</button>
+                <button className="action-btn view" onClick={() => handleView(item.id)}>👁️ View</button>
+                <button className="action-btn delete" onClick={() => handleDelete(item.id)}>🗑️ Delete</button>
               </div>
             </div>
           ))}

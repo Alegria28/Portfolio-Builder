@@ -39,8 +39,6 @@ const Pricing: React.FC = () => {
         "White-label solution",
         "API access",
         "Dedicated support",
-        "Custom integrations",
-        "SLA guarantee"
       ],
       buttonText: "Contact Sales",
       featured: false
