@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-&v_-8chqso0j_983bhantbsv(d4y^!-@zma1#n*ovj1^zhlp)q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -37,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',   
+    'rest_framework',  
+    'rest_framework.authtoken',
     'corsheaders',
     'portfoliobuilder',
 ]
@@ -129,9 +133,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
     "http://127.0.0.1:3000",
+    "http://localhost:3001",  # Alternative dev port if 3000 is in use
+    "http://127.0.0.1:3001",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF trusted origins (needed for secure POSTs from frontend during dev)
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+]
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -141,4 +155,16 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
+
+# Custom User Model
+AUTH_USER_MODEL = 'portfoliobuilder.User'
+
+# Authentication settings
+LOGIN_URL = '/api/auth/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
