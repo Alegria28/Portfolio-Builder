@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { apiService } from '../services/api';
 
-interface PortfolioItem {
+interface PortfolioDetail {
   id: number;
   title: string;
-  description: string;
-  technology: string;
+  hero_title: string;
+  hero_subtitle: string;
+  about_content: string;
+  template_name: string;
   created_at: string;
 }
 
 const Portfolio: React.FC = () => {
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  const [portfolio, setPortfolio] = useState<PortfolioDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<string>('');
+  const { id } = useParams();
 
   useEffect(() => {
     fetchData();
@@ -27,9 +31,11 @@ const Portfolio: React.FC = () => {
       const healthData = await apiService.healthCheck();
       setApiStatus(healthData.message);
       
-      // Fetch portfolio items
-      const items = await apiService.getPortfolioItems();
-      setPortfolioItems(items);
+      // Fetch portfolio detail (modern API)
+      if (id) {
+        const detail = await apiService.getPortfolio(Number(id));
+        setPortfolio(detail);
+      }
       
       setError(null);
     } catch (err) {
@@ -70,47 +76,29 @@ const Portfolio: React.FC = () => {
     );
   }
 
+  if (!portfolio) {
+    return (
+      <div className="portfolio-container">
+        <h2>Portfolio</h2>
+        <p>Not found.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="portfolio-container">
-      <h2>Portfolio Builder</h2>
-      
+      <h2>{portfolio.title}</h2>
       <div className="api-status" style={{ padding: '10px', backgroundColor: '#e8f5e8', borderRadius: '5px', marginBottom: '20px' }}>
         <strong>✅ API Status:</strong> {apiStatus}
       </div>
-
-      <h3>Portfolio Items</h3>
-      
-      {portfolioItems.length === 0 ? (
-        <p>No portfolio items found.</p>
-      ) : (
-        <div className="portfolio-items">
-          {portfolioItems.map((item) => (
-            <div key={item.id} className="portfolio-item" style={{ 
-              border: '1px solid #ddd', 
-              padding: '15px', 
-              margin: '10px 0', 
-              borderRadius: '5px',
-              backgroundColor: '#f9f9f9'
-            }}>
-              <h4>{item.title}</h4>
-              <p><strong>Description:</strong> {item.description}</p>
-              <p><strong>Technology:</strong> {item.technology}</p>
-              <p><strong>Created:</strong> {item.created_at}</p>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f0f8ff', borderRadius: '5px' }}>
-        <h4>🎉 Success! React ↔ Django Connection Working</h4>
-        <p>Your React frontend is successfully communicating with your Django backend!</p>
-        <ul>
-          <li>✅ React app running on http://localhost:3000</li>
-          <li>✅ Django API responding from http://localhost:8000</li>
-          <li>✅ CORS configured properly</li>
-          <li>✅ SQLite database ready for use</li>
-        </ul>
-      </div>
+      <p><strong>Template:</strong> {portfolio.template_name}</p>
+      <p><strong>Created:</strong> {new Date(portfolio.created_at).toLocaleDateString()}</p>
+      <hr />
+      <h3>Hero</h3>
+      <p>{portfolio.hero_title}</p>
+      <p>{portfolio.hero_subtitle}</p>
+      <h3>About</h3>
+      <p>{portfolio.about_content}</p>
     </div>
   );
 };
