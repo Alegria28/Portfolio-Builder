@@ -7,9 +7,8 @@ const Pricing: React.FC = () => {
       price: "Free",
       period: "Forever",
       features: [
-        "Up to 3 projects",
+        "Up to 3 portfolios",
         "Basic templates",
-        "SQLite database",
         "Community support",
         "Mobile responsive"
       ],
@@ -21,10 +20,8 @@ const Pricing: React.FC = () => {
       price: "$9",
       period: "per month",
       features: [
-        "Unlimited projects",
+        "Unlimited Portfolios",
         "Premium templates",
-        "Custom domains",
-        "Analytics dashboard",
         "Priority support",
         "Advanced customization",
         "Export options"
