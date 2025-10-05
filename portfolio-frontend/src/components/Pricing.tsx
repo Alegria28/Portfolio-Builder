@@ -68,7 +68,7 @@ const Pricing: React.FC = () => {
             
             <ul className="pricing-features">
               {plan.features.map((feature, featureIndex) => (
-                <li key={featureIndex}>✅ {feature}</li>
+                <li key={featureIndex}>{feature}</li>
               ))}
             </ul>
             
@@ -83,22 +83,22 @@ const Pricing: React.FC = () => {
         <h3>Frequently Asked Questions</h3>
         
         <div className="faq-item">
-          <h4>🤔 Can I change my plan anytime?</h4>
+          <h4>Can I change my plan anytime?</h4>
           <p>Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
         </div>
 
         <div className="faq-item">
-          <h4>💳 What payment methods do you accept?</h4>
+          <h4>What payment methods do you accept?</h4>
           <p>We accept all major credit cards, PayPal, and bank transfers for enterprise plans.</p>
         </div>
 
         <div className="faq-item">
-          <h4>🔒 Is my data secure?</h4>
+          <h4>Is my data secure?</h4>
           <p>Absolutely! We use enterprise-grade security with SQLite database and encrypted connections.</p>
         </div>
 
         <div className="faq-item">
-          <h4>🚀 Do you offer a free trial?</h4>
+          <h4>Do you offer a free trial?</h4>
           <p>Our Starter plan is free forever! Upgrade anytime to unlock premium features.</p>
         </div>
       </div>

@@ -28,7 +28,7 @@ const Navigation: React.FC = () => {
         <ul className="nav-links">
           <li>
             <Link to="/" className={isActive('/')}>
-              🏠 Home
+              Home
             </Link>
           </li>
           
@@ -36,20 +36,20 @@ const Navigation: React.FC = () => {
             <>
               <li>
                 <Link to="/templates" className={isActive('/templates')}>
-                  🎨 Templates
+                  Templates
                 </Link>
               </li>
               <li>
                 <Link to="/dashboard" className={isActive('/dashboard')}>
-                  📊 Dashboard
+                  Dashboard
                 </Link>
               </li>
               <li className="user-menu">
                 <span className="user-greeting">
-                  👋 {user?.first_name || user?.username}
+                  {user?.first_name || user?.username}
                 </span>
                 <button onClick={handleLogout} className="logout-btn">
-                  🚪 Logout
+                  Logout
                 </button>
               </li>
             </>
@@ -57,17 +57,17 @@ const Navigation: React.FC = () => {
             <>
               <li>
                 <Link to="/pricing" className={isActive('/pricing')}>
-                  💰 Pricing
+                  Pricing
                 </Link>
               </li>
               <li>
                 <Link to="/login" className={isActive('/login')}>
-                  🔑 Login
+                  Login
                 </Link>
               </li>
               <li>
                 <Link to="/register" className={isActive('/register')}>
-                  ✨ Sign Up
+                  Sign Up
                 </Link>
               </li>
             </>

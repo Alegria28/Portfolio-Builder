@@ -38,8 +38,8 @@ const Login: React.FC = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Welcome Back</h2>
-        <p className="auth-subtitle">Sign in to create amazing portfolios</p>
+  <h2>Welcome back</h2>
+  <p className="auth-subtitle">Sign in to access your portfolio workspace</p>
         
         {error && <div className="error-message">{error}</div>}
         
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
           </div>
           
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? '🔄 Signing In...' : '🚀 Sign In'}
+            {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
         
