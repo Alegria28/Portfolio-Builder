@@ -37,6 +37,14 @@ local_settings.py
 *.swp
 *.swo
 
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+
 # OS
 .DS_Store
 Thumbs.db
