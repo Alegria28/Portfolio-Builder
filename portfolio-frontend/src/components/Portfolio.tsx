@@ -21,7 +21,7 @@ const Portfolio: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [id]);
 
   const fetchData = async () => {
     try {
@@ -59,7 +59,7 @@ const Portfolio: React.FC = () => {
     return (
       <div className="portfolio-container">
         <h2>Portfolio</h2>
-        <div className="error-message" style={{ color: 'red', padding: '20px', border: '1px solid red', borderRadius: '5px' }}>
+        <div className="error-message">
           <p><strong>Error:</strong> {error}</p>
           <p><strong>To fix this:</strong></p>
           <ol>
@@ -69,9 +69,11 @@ const Portfolio: React.FC = () => {
             <li>Refresh this page</li>
           </ol>
         </div>
-        <button onClick={fetchData} style={{ marginTop: '10px', padding: '10px', cursor: 'pointer' }}>
-          Retry Connection
-        </button>
+        <div className="mt-10">
+          <button onClick={fetchData} className="auth-button">
+            Retry Connection
+          </button>
+        </div>
       </div>
     );
   }
@@ -88,7 +90,7 @@ const Portfolio: React.FC = () => {
   return (
     <div className="portfolio-container">
       <h2>{portfolio.title}</h2>
-      <div className="api-status" style={{ padding: '10px', backgroundColor: '#e8f5e8', borderRadius: '5px', marginBottom: '20px' }}>
+      <div className="api-status">
         <strong>✅ API Status:</strong> {apiStatus}
       </div>
       <p><strong>Template:</strong> {portfolio.template_name}</p>
