@@ -27,6 +27,7 @@ const Dashboard: React.FC = () => {
     hero_subtitle: 'Your Role',
     about_content: 'Tell your story here...',
   });
+  const [backdropMouseDown, setBackdropMouseDown] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
@@ -102,6 +103,18 @@ const Dashboard: React.FC = () => {
       console.error('Delete failed', e);
       setError('Failed to delete portfolio');
     }
+  };
+
+  // Robust backdrop handlers: only close if the click both starts AND ends on the backdrop
+  const handleBackdropMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setBackdropMouseDown(e.target === e.currentTarget);
+  };
+
+  const handleBackdropMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (backdropMouseDown && e.target === e.currentTarget) {
+      setShowCreateModal(false);
+    }
+    setBackdropMouseDown(false);
   };
 
   if (loading) {
@@ -214,7 +227,11 @@ const Dashboard: React.FC = () => {
       </div>
 
       {showCreateModal && (
-        <div className="modal-backdrop" onClick={() => setShowCreateModal(false)}>
+        <div
+          className="modal-backdrop"
+          onMouseDown={handleBackdropMouseDown}
+          onMouseUp={handleBackdropMouseUp}
+        >
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Create New Portfolio</h3>

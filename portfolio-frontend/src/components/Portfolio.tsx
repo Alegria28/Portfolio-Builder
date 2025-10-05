@@ -17,6 +17,7 @@ const Portfolio: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<string>('');
+  const [htmlPreview, setHtmlPreview] = useState<string>('');
   const { id } = useParams();
 
   useEffect(() => {
@@ -33,8 +34,16 @@ const Portfolio: React.FC = () => {
       
       // Fetch portfolio detail (modern API)
       if (id) {
-        const detail = await apiService.getPortfolio(Number(id));
+        const portfolioId = Number(id);
+        const detail = await apiService.getPortfolio(portfolioId);
         setPortfolio(detail);
+        // Fetch server-rendered HTML for exact preview
+        try {
+          const html = await apiService.exportPortfolioHtml(portfolioId);
+          setHtmlPreview(html);
+        } catch (e) {
+          console.warn('Preview HTML fetch failed, falling back to basic view');
+        }
       }
       
       setError(null);
@@ -96,11 +105,23 @@ const Portfolio: React.FC = () => {
       <p><strong>Template:</strong> {portfolio.template_name}</p>
       <p><strong>Created:</strong> {new Date(portfolio.created_at).toLocaleDateString()}</p>
       <hr />
-      <h3>Hero</h3>
-      <p>{portfolio.hero_title}</p>
-      <p>{portfolio.hero_subtitle}</p>
-      <h3>About</h3>
-      <p>{portfolio.about_content}</p>
+      {htmlPreview ? (
+        <div className="portfolio-preview">
+          <iframe
+            title={`Portfolio ${portfolio.id} Preview`}
+            srcDoc={htmlPreview}
+            sandbox="allow-popups allow-scripts allow-forms allow-same-origin"
+          />
+        </div>
+      ) : (
+        <>
+          <h3>Hero</h3>
+          <p>{portfolio.hero_title}</p>
+          <p>{portfolio.hero_subtitle}</p>
+          <h3>About</h3>
+          <p>{portfolio.about_content}</p>
+        </>
+      )}
     </div>
   );
 };

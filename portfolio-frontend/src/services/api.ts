@@ -246,6 +246,21 @@ export const apiService = {
     }
   },
 
+  // Get server-rendered HTML (same as export) as a string for preview embedding
+  exportPortfolioHtml: async (portfolioId: number) => {
+    try {
+      const response = await apiClient.post('/export/', { portfolio_id: portfolioId }, {
+        headers: { Accept: 'text/html' },
+        // Ensure axios returns raw text
+        transformResponse: [(data) => data],
+      });
+      return response.data as string;
+    } catch (error) {
+      console.error('Failed to fetch exported HTML:', error);
+      throw error;
+    }
+  },
+
   // Utility functions
   isAuthenticated: () => {
     return !!localStorage.getItem('authToken');
